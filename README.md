@@ -33,15 +33,15 @@ BMI (kg/m^2) = weight/(height)^2
 #Tech employed:
 
 -Python
--MySQL
+-SQLite
 -Google Sheets
 -Git and Github
 
 #Project Structure:
 
 -First Documentation (README.md)
--Second Generating a table for patient data with Google Sheets and MySQL
--Third Logic and programation with Python, pandas and MySQL
+-Second Generating a table for patient data with Google Sheets and SQlite
+-Third Logic and programation with Python, pandas and SQLite
 
 #How can I run this?
 
