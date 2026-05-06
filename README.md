@@ -39,9 +39,9 @@ BMI (kg/m^2) = weight/(height)^2
 
 #Project Structure:
 
-1 Documentation (README.md)
-2 Generating a table for patient data with Google Sheets and MySQL
-3 Logic and programation with Python, pandas and MySQL
+-First Documentation (README.md)
+-Second Generating a table for patient data with Google Sheets and MySQL
+-Third Logic and programation with Python, pandas and MySQL
 
 #How can I run this?
 
