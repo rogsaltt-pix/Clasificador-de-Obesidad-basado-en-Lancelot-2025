@@ -30,7 +30,7 @@ El proyecto está orientado al área de Nutrición y Dietética, permitiendo alm
 
 La lógica de clasificación está basada en:
 
->Rubino et al. (2025). *The Lancet Diabetes & Endocrinology*
+> Rubino et al. (2025). *The Lancet Diabetes & Endocrinology*
 
 El sistema considera:
 

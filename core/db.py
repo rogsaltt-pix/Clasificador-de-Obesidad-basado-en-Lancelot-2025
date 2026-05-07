@@ -3,7 +3,7 @@ db.py — Conexión y gestión de la base de datos SQLite.
 """
 import sqlite3
 
-DB_PATH = "pacientes.db"
+DB_PATH = "database/pacientes.db"
 
 
 def get_conexion() -> sqlite3.Connection:
