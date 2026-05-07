@@ -1,59 +1,81 @@
-#Hi, this is a try.
+# Sistema de Clasificación de Obesidad
 
-Today's nutritionists need to apply their knowledge accurately and efficiently. For this reason, this program has been designed to classify patients by entering specific data, providing an efficient tool for assessing obesity in the healthcare setting.
+Aplicación desarrollada en Python para el registro, evaluación y clasificación de pacientes según criterios modernos de obesidad clínica y preclínica basados en composición corporal, IMC y signos clínicos.
 
-This project enables the analysis of patient data and the classification of patients based on their nutritional status using indicators such as body mass index (BMI) and other clinical variables.
+El proyecto está orientado al área de Nutrición y Dietética, permitiendo almacenar pacientes, analizar indicadores antropométricos y generar clasificaciones clínicas de forma automatizada mediante una interfaz gráfica intuitiva.
 
-#Objetives: 
+---
 
-Classify patients according to established criteria and serve as a basis for future clinical analyses.
+# Características principales
 
-#Concepts employed:
+- Registro completo de pacientes
+- Cálculo automático de IMC
+- Evaluación de porcentaje de grasa corporal
+- Evaluación de masa muscular
+- Clasificación:
+  - Sin obesidad
+  - Obesidad preclínica
+  - Obesidad clínica
+- Detección de daño orgánico y signos de riesgo
+- Sistema visual con colores por clasificación
+- Base de datos SQLite integrada
+- Visualización detallada de pacientes
+- Eliminación segura de registros
+- Arquitectura modular y escalable
+- Interfaz gráfica desarrollada con Tkinter
 
--Obesity:
+---
 
--Metabolic health
+# Criterios clínicos implementados
 
--Cardiovascular health
+La lógica de clasificación está basada en:
 
--BMI (Body Mass Index):
+>Rubino et al. (2025). *The Lancet Diabetes & Endocrinology*
 
--Body composition
+El sistema considera:
 
--Metabolic biomarkers
+- IMC (Índice de Masa Corporal)
+- Porcentaje de grasa corporal
+- Masa muscular
+- Signos y síntomas clínicos
+- Evidencia de daño orgánico o funcional
 
--Preclinic obesity: Excess body fat without obvious metabolic abnormalities.
+---
 
--Clinic obesity: Excess fat with metabolic and/or functional consequences.
+# Tecnologías utilizadas
 
-#Equals employed:
+- Python
+- Tkinter
+- SQLite
+- Git & GitHub
 
-BMI (kg/m^2) = weight/(height)^2
+---
 
-#Tech employed:
+# Estructura del proyecto
 
--Python
--SQLite
--Google Sheets
--Git and Github
-
-#Project Structure:
-
--First Documentation (README.md)
--Second Generating a table for patient data with Google Sheets and SQlite
--Third Logic and programation with Python, pandas and SQLite
-
-#How can I run this?
-
-Run python main.py
-
-#IMPORTANT
-
-The data patients used in this project are simulated and do not correspond to actual patients.
-
-#Future improvements:
-
--Include more clinical variables.
--Connect to a real database.
--Create a graphical interface.
--Implement statistical analysis using RStudio.
+```text
+PROYECTO_GIT/
+│
+├── main.py
+│
+├── assets/
+│   ├── icon.ico
+│   ├── icon.png
+│   └── logo.png
+│
+├── core/
+│   ├── clasificacion.py
+│   ├── constantes.py
+│   └── db.py
+│
+├── database/
+│   ├── pacientes.db
+│   └── signosysintomas.sqlite
+│
+├── ui/
+│   ├── ui_utils.py
+│   ├── ventana_registro.py
+│   ├── ventana_visualizar.py
+│   └── ventana_eliminar.py
+│
+└── README.md
