@@ -1,59 +1,14 @@
-# Sistema de Clasificación de Obesidad
+MyBocu. V0.1
+Hecho por un estudiante de Nutrición y Dietética de la Universidad Nacional de Colombia, Bogotá.
 
-Aplicación desarrollada en Python para el registro, evaluación y clasificación de pacientes según criterios modernos de obesidad clínica y preclínica basados en composición corporal, IMC y signos clínicos.
+Basado en The Lancet Diabetes & Endocrinology. (2025). Redefining obesity: advancing care for better lives. Disponible en: https://www.thelancet.com/journals/landia/article/PIIS2213-8587(25)00004-X/fulltext
 
-El proyecto está orientado al área de Nutrición y Dietética, permitiendo almacenar pacientes, analizar indicadores antropométricos y generar clasificaciones clínicas de forma automatizada mediante una interfaz gráfica intuitiva.
+La obesidad ya no se debe diagnosticar por IMC exclusivamente, ahora existen parametros y datos que nos guiarán a una diagnostico preciso de esta enfermedad crónica no transmisible. Desde hace un año he estado pensando en crear una herramienta que me permitiera almacenar datos, analizarlos y automatizar resultados. En marzo de 2026 se creó la idea de MyBocu. V0.1. Esta herramienta tiene la capacidad de diagnosticar obesidad clinica o pre-clinica basandose en los datos suministrados por el profesional de la salud encargado.
 
----
+Ciencia bajo la evidencia.
 
-# Características principales
+#ESTRUCTURA
 
-- Registro completo de pacientes
-- Cálculo automático de IMC
-- Evaluación de porcentaje de grasa corporal
-- Evaluación de masa muscular
-- Clasificación:
-  - Sin obesidad
-  - Obesidad preclínica
-  - Obesidad clínica
-- Detección de daño orgánico y signos de riesgo
-- Sistema visual con colores por clasificación
-- Base de datos SQLite integrada
-- Visualización detallada de pacientes
-- Eliminación segura de registros
-- Arquitectura modular y escalable
-- Interfaz gráfica desarrollada con Tkinter
-
----
-
-# Criterios clínicos implementados
-
-La lógica de clasificación está basada en:
-
-> Rubino et al. (2025). *The Lancet Diabetes & Endocrinology*
-
-El sistema considera:
-
-- IMC (Índice de Masa Corporal)
-- Porcentaje de grasa corporal
-- Masa muscular
-- Signos y síntomas clínicos
-- Evidencia de daño orgánico o funcional
-
----
-
-# Tecnologías utilizadas
-
-- Python
-- Tkinter
-- SQLite
-- Git & GitHub
-
----
-
-# Estructura del proyecto
-
-```text
 PROYECTO_GIT/
 │
 ├── main.py
