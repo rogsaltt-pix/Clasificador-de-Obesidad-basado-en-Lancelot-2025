@@ -7,6 +7,15 @@ La obesidad ya no se debe diagnosticar por IMC exclusivamente, ahora existen par
 
 Ciencia bajo la evidencia.
 
+#EJECUTAR CODIGO MAIN PARA INICIAR PROGRAMA
+
+#TECNOLOGIAS IMPLEMENTADAS
+
+- Visual Studio Code: Python, tkinter y SQLite.
+- Canva y Paint.
+- Claude, Gemini y Manus.
+- GitHub y Git.
+
 #ESTRUCTURA
 
 PROYECTO_GIT/
@@ -15,8 +24,8 @@ PROYECTO_GIT/
 │
 ├── assets/
 │   ├── icon.ico
-│   ├── icon.png
-│   └── logo.png
+│   └── icon.png
+│    
 │
 ├── core/
 │   ├── clasificacion.py
@@ -25,6 +34,8 @@ PROYECTO_GIT/
 │
 ├── database/
 │   ├── pacientes.db
+|   ├── pacientes.sqlite
+|   ├── sintomas_obesidad.txt
 │   └── signosysintomas.sqlite
 │
 ├── ui/
@@ -32,5 +43,7 @@ PROYECTO_GIT/
 │   ├── ventana_registro.py
 │   ├── ventana_visualizar.py
 │   └── ventana_eliminar.py
+|
+├──LICENSE
 │
 └── README.md
