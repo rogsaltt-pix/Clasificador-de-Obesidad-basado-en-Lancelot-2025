@@ -2,6 +2,21 @@
 ui_utils.py — Utilidades UI: firma, icono y modo oscuro.
 """
 import tkinter as tk
+import os
+import sys
+
+# ── Gestión de Rutas para PyInstaller ─────────────────────────────────────────
+
+def resource_path(relative_path):
+    """ Obtiene la ruta absoluta a un recurso, funciona para dev y PyInstaller. """
+    try:
+        # PyInstaller crea una carpeta temporal y guarda la ruta en _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        # En desarrollo, usa la ruta base del proyecto
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 # ── Tema global ───────────────────────────────────────────────────────────────
 _modo_oscuro = False
@@ -88,7 +103,8 @@ def agregar_firma(parent: tk.BaseWidget) -> None:
 
 def aplicar_icono(ventana: tk.BaseWidget) -> None:
     try:
-        ventana.iconbitmap("assets/icon.ico")
+        icono_path = resource_path("assets/icon.ico")
+        ventana.iconbitmap(icono_path)
     except Exception:
         pass
 

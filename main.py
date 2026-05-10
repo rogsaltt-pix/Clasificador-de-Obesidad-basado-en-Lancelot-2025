@@ -3,19 +3,16 @@ main.py — Punto de entrada. Solo inicialización y menú principal.
 """
 import tkinter as tk
 from ui.ui_utils import (agregar_firma, aplicar_icono, toggle_modo_oscuro,
-                          aplicar_tema_ventana, registrar_ventana, get_tema, es_oscuro)
-
+                          aplicar_tema_ventana, registrar_ventana, get_tema, es_oscuro, resource_path)
 try:
     import ctypes
     ctypes.windll.shcore.SetProcessDpiAwareness(1)
 except Exception:
     pass
-
 from core.db import inicializar_db
 from ui.ventana_registro   import abrir_registro
 from ui.ventana_visualizar import abrir_visualizar
 from ui.ventana_eliminar   import abrir_eliminar_paciente
-
 
 def abrir_menu(ventana_root: tk.Tk) -> None:
     menu = tk.Toplevel(ventana_root)
@@ -28,20 +25,21 @@ def abrir_menu(ventana_root: tk.Tk) -> None:
         # Limpiar ventana
         for w in menu.winfo_children():
             w.destroy()
-
+        
         t = get_tema()
-
         menu.configure(bg=t["bg_header"])
 
         # ── Encabezado ────────────────────────────────────────────────────────
         hf = tk.Frame(menu, bg=t["bg_header"])
         hf.pack(fill="x", pady=(0, 0))
-
+        
         tk.Label(hf, text="🍎", font=("Segoe UI", 32),
                  bg=t["bg_header"], fg=t["fg_header"]).pack(pady=(20, 4))
+        
         tk.Label(hf, text="Clasificación de Obesidad",
                  font=("Segoe UI", 14, "bold"),
                  bg=t["bg_header"], fg=t["fg_header"]).pack()
+        
         tk.Label(hf, text="Criterio Lancet 2025",
                  font=("Segoe UI", 8),
                  bg=t["bg_header"], fg="#94A3B8").pack(pady=(2, 0))
@@ -108,12 +106,12 @@ def abrir_menu(ventana_root: tk.Tk) -> None:
     registrar_ventana(menu, construir)
     menu.protocol("WM_DELETE_WINDOW", ventana_root.destroy)
 
-
 if __name__ == "__main__":
     inicializar_db()
     root = tk.Tk()
     try:
-        root.iconbitmap("assets/icon.ico")
+        icono_path = resource_path("assets/icon.ico")
+        root.iconbitmap(icono_path)
     except Exception:
         pass
     root.withdraw()
