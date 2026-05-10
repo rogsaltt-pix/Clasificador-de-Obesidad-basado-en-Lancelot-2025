@@ -1,0 +1,136 @@
+Hiperglucemia
+Hipoglucemia
+Prediabetes
+Diabetes mellitus tipo 2
+Resistencia a la insulina
+Polidipsia
+Poliuria
+Polifagia
+Nocturia
+Sed excesiva
+Hambre nocturna
+Aumento de peso
+Dificultad para perder peso
+Fatiga postprandial
+Intolerancia al ejercicio
+Dislipidemia
+Hipertrigliceridemia
+Colesterol elevado
+Acantosis nigricans
+Síndrome metabólico
+Hipertensión arterial
+Palpitaciones
+Taquicardia
+Bradicardia
+Arritmia
+Dolor torácico
+Opresión en el pecho
+Edema periférico
+Ingurgitación yugular
+Insuficiencia cardíaca
+Cardiopatía
+Enfermedad coronaria
+Disnea de esfuerzo
+Intolerancia al ejercicio
+Soplo cardíaco
+Infarto agudo de miocardio
+Cianosis
+Fatiga cardiovascular
+Apnea del sueño
+Ronquidos
+Disnea
+Ortopnea
+Hipoventilación
+Sensación de ahogo
+Somnolencia diurna
+Fatiga respiratoria
+Taquipnea
+Sibilancias
+Tos nocturna
+Baja tolerancia al esfuerzo
+Hígado graso
+Esteatosis hepática
+Hepatomegalia
+Reflujo gastroesofágico
+Distensión abdominal
+Dolor abdominal
+Flatulencia
+Estreñimiento
+Náuseas
+Ascitis
+Ictericia
+Eructos frecuentes
+Dolor lumbar
+Dolor articular
+Osteoartritis
+Rigidez matutina
+Dolor muscular
+Debilidad muscular
+Pérdida de fuerza
+Fatiga muscular
+Limitación funcional
+Dificultad para caminar
+Caídas frecuentes
+Calambres
+Inflamación articular
+Cefalea
+Migraña
+Somnolencia
+Fatiga crónica
+Confusión
+Dificultad para concentrarse
+Pérdida de memoria
+Mareo
+Hormigueo
+Entumecimiento
+Visión borrosa
+Desmayo
+Neuropatía periférica
+Ansiedad
+Depresión
+Irritabilidad
+Baja autoestima
+Estrés
+Aislamiento social
+Alteraciones del sueño
+Insomnio
+Fatiga emocional
+Incontinencia urinaria
+Frecuencia urinaria aumentada
+Oliguria
+Anuria
+Hematuria
+Orina oscura
+Nefropatía
+Acantosis nigricans
+Estrías
+Sudoración excesiva
+Sudoración nocturna
+Irritación cutánea
+Infecciones cutáneas recurrentes
+Xerosis
+Eritema
+Prurito
+Síndrome de ovario poliquístico
+Irregularidades menstruales
+Infertilidad
+Disfunción eréctil
+Hipogonadismo
+Disminución de libido
+Fatiga
+Baja energía
+Bajo rendimiento físico
+Limitación funcional
+Intolerancia al esfuerzo
+Dificultad para realizar actividades diarias
+Sedentarismo progresivo
+Dependencia física parcial
+Diabetes establecida
+Hipertensión persistente
+Apnea obstructiva del sueño
+Hígado graso avanzado
+Enfermedad cardiovascular
+Discapacidad funcional
+Insuficiencia respiratoria
+Edema pulmonar
+Limitación severa de movilidad

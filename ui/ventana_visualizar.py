@@ -6,7 +6,7 @@ from tkinter import ttk
 
 from core.constantes import COLOR_CLASIFICACION
 from core.db import obtener_pacientes, obtener_paciente_por_id
-from ui.ui_utils import agregar_firma, aplicar_icono
+from ui.ui_utils import agregar_firma, aplicar_icono, get_tema
 
 
 def _abrir_detalle(vis: tk.Toplevel, id_paciente: int) -> None:
@@ -14,28 +14,48 @@ def _abrir_detalle(vis: tk.Toplevel, id_paciente: int) -> None:
     if not row:
         return
 
-    (nombre, edad, sexo, peso, talla, imc, grasa, musculo, signos,
-     imc_label, exceso, musc_bajo, danio, clasificacion, justificacion) = row
+    # Nuevo esquema: nombre, edad, sexo, peso, talla, imc, exceso_grasa, nivel_musculo, signos, imc_label, clasificacion, justificacion
+    (nombre, edad, sexo, peso, talla, imc, exceso, musculo, signos,
+     imc_label, clasificacion, justificacion) = row
 
     color    = COLOR_CLASIFICACION.get(clasificacion, "#555")
     sexo_txt = "Masculino" if sexo == "M" else "Femenino"
+    t        = get_tema()
 
     det = tk.Toplevel(vis)
     det.title(f"Detalle — {nombre}")
-    det.geometry("520x560")
-    det.resizable(False, False)
+    det.geometry("580x650") 
+    det.resizable(True, True)
+    det.configure(bg=t["bg"])
     det.grab_set()
+    aplicar_icono(det)
 
-    # Encabezado
+    det.rowconfigure(1, weight=1)
+    det.columnconfigure(0, weight=1)
+
+    # 1. Encabezado
     header = tk.Frame(det, bg=color, pady=12)
-    header.pack(fill="x")
-    tk.Label(header, text=nombre, font=("Arial", 14, "bold"),
+    header.grid(row=0, column=0, sticky="ew")
+    tk.Label(header, text=nombre, font=("Segoe UI", 14, "bold"),
              bg=color, fg="white").pack()
-    tk.Label(header, text=clasificacion, font=("Arial", 11),
+    tk.Label(header, text=clasificacion, font=("Segoe UI", 11),
              bg=color, fg="white").pack()
 
-    body = tk.Frame(det, padx=24, pady=16)
-    body.pack(fill="both", expand=True)
+    # 2. Área Central con Scroll
+    content_area = tk.Frame(det, bg=t["bg"])
+    content_area.grid(row=1, column=0, sticky="nsew")
+
+    canvas = tk.Canvas(content_area, bg=t["bg"], highlightthickness=0)
+    vsb = tk.Scrollbar(content_area, orient="vertical", command=canvas.yview)
+    canvas.configure(yscrollcommand=vsb.set)
+    vsb.pack(side="right", fill="y")
+    canvas.pack(side="left", fill="both", expand=True)
+
+    body = tk.Frame(canvas, padx=28, pady=16, bg=t["bg"])
+    fid = canvas.create_window((0, 0), window=body, anchor="nw")
+    
+    body.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    canvas.bind("<Configure>", lambda e: canvas.itemconfig(fid, width=e.width))
 
     datos = [
         ("ID",               str(id_paciente)),
@@ -44,94 +64,133 @@ def _abrir_detalle(vis: tk.Toplevel, id_paciente: int) -> None:
         ("Peso",             f"{peso} kg"),
         ("Talla",            f"{talla} m"),
         ("IMC",              f"{imc}  —  {imc_label}"),
-        ("% Grasa corporal", f"{grasa}%  ({'↑ Exceso' if exceso else '✓ Normal'})"),
-        ("% Masa muscular",  f"{musculo}%  ({'↓ Bajo' if musc_bajo else '✓ Normal'})"),
-        ("Daño orgánico",    "Sí" if danio else "No"),
+        ("Exceso de grasa",  exceso),
+        ("Masa muscular",    musculo),
         ("Signos/Síntomas",  signos or "Sin signos"),
     ]
 
     for i, (lbl, val) in enumerate(datos):
-        tk.Label(body, text=lbl + ":", font=("Arial", 9, "bold"),
-                 anchor="w", width=18).grid(row=i, column=0, sticky="w", pady=3)
-        tk.Label(body, text=val, anchor="w", wraplength=280,
-                 justify="left").grid(row=i, column=1, sticky="w", pady=3, padx=8)
+        tk.Label(body, text=lbl + ":", font=("Segoe UI", 9, "bold"),
+                 anchor="w", width=18, bg=t["bg"], fg=t["fg"]).grid(
+            row=i, column=0, sticky="w", pady=3)
+        tk.Label(body, text=val, anchor="w", wraplength=300,
+                 justify="left", bg=t["bg"], fg=t["fg"]).grid(
+            row=i, column=1, sticky="w", pady=3, padx=8)
 
-    tk.Frame(body, height=1, bg="#ddd").grid(
-        row=len(datos), column=0, columnspan=2, sticky="ew", pady=(10, 6)
-    )
-    tk.Label(body, text="Justificación:", font=("Arial", 9, "bold"),
-             anchor="w").grid(row=len(datos)+1, column=0, columnspan=2, sticky="w")
-    tk.Label(body, text=justificacion or "—", wraplength=440,
-             justify="left", fg="#333", font=("Arial", 9)).grid(
-        row=len(datos)+2, column=0, columnspan=2, sticky="w", pady=(4, 0)
-    )
+    tk.Frame(body, height=1, bg=t["border"]).grid(
+        row=len(datos), column=0, columnspan=2, sticky="ew", pady=(10, 6))
 
-    tk.Button(det, text="Cerrar", command=det.destroy,
-              width=14, font=("Arial", 10)).pack(pady=14)
+    tk.Label(body, text="Justificación:", font=("Segoe UI", 9, "bold"),
+             anchor="w", bg=t["bg"], fg=t["fg"]).grid(
+        row=len(datos)+1, column=0, columnspan=2, sticky="w")
+    tk.Label(body, text=justificacion or "—", wraplength=460,
+             justify="left", fg=t["fg_sub"], font=("Segoe UI", 9),
+             bg=t["bg"]).grid(
+        row=len(datos)+2, column=0, columnspan=2, sticky="w", pady=(4, 0))
+
+    # 3. Botón Cerrar
+    footer = tk.Frame(det, bg=t["bg"], pady=12, highlightbackground=t["border"], highlightthickness=1)
+    footer.grid(row=2, column=0, sticky="ew")
+    tk.Button(footer, text="Cerrar", command=det.destroy,
+              width=14, font=("Segoe UI", 10),
+              bg="#3B82F6", fg="white", relief="flat",
+              activebackground="#2563EB", cursor="hand2").pack()
 
 
 def abrir_visualizar(ventana_root: tk.Tk, menu: tk.Toplevel) -> None:
     menu.withdraw()
+    t = get_tema()
 
     vis = tk.Toplevel(ventana_root)
     vis.title("Lista de Pacientes")
-    vis.geometry("1200x500")
-    agregar_firma(vis)
+    vis.geometry("1100x520")
+    vis.configure(bg=t["bg"])
     aplicar_icono(vis)
 
-    columnas = (
-        "ID", "Nombre", "Edad", "Sexo", "Peso", "Talla", "IMC",
-        "% Grasa", "% Músculo", "Signos", "IMC Clasif.",
-        "Exceso grasa", "Músculo bajo", "Daño org.", "Clasificación"
-    )
-    anchos = [40, 130, 50, 50, 60, 60, 60, 70, 80, 150, 110, 90, 90, 80, 130]
+    hf = tk.Frame(vis, bg=t["bg_header"], pady=10)
+    hf.pack(fill="x")
+    tk.Label(hf, text="📋  Lista de Pacientes",
+             font=("Segoe UI", 13, "bold"),
+             bg=t["bg_header"], fg="white").pack(side="left", padx=20)
+    tk.Label(hf, text="© rogsaltt-pix",
+             font=("Segoe UI", 8, "italic"),
+             bg=t["bg_header"], fg="#94A3B8").pack(side="right", padx=16)
 
-    tabla = ttk.Treeview(vis, columns=columnas, show="headings")
+    style = ttk.Style()
+    style.theme_use("clam")
+    if t["bg"] == "#0F172A":
+        style.configure("Treeview", background="#1E293B",
+                        fieldbackground="#1E293B", foreground="#F1F5F9",
+                        rowheight=26, font=("Segoe UI", 9))
+        style.configure("Treeview.Heading", background="#0A1628",
+                        foreground="white", font=("Segoe UI", 9, "bold"))
+    else:
+        style.configure("Treeview", background="white",
+                        fieldbackground="white", foreground="#1E293B",
+                        rowheight=26, font=("Segoe UI", 9))
+        style.configure("Treeview.Heading", background="#1A2B4A",
+                        foreground="white", font=("Segoe UI", 9, "bold"))
+
+    # Columnas simplificadas para el nuevo esquema
+    columnas = ("ID", "Nombre", "Edad", "Sexo", "Peso", "Talla", "IMC",
+                "Exceso Grasa", "Masa Muscular", "Signos", "Clasificación")
+    anchos = [40, 150, 50, 70, 60, 60, 60, 100, 110, 180, 150]
+
+    frame_tabla = tk.Frame(vis, bg=t["bg"])
+    frame_tabla.pack(fill="both", expand=True, padx=10, pady=8)
+
+    tabla = ttk.Treeview(frame_tabla, columns=columnas, show="headings")
     for col, w in zip(columnas, anchos):
         tabla.heading(col, text=col)
         tabla.column(col, anchor="center", width=w)
 
-    tabla.tag_configure("Sin obesidad",        background="#d5f5e3")
-    tabla.tag_configure("Obesidad preclínica", background="#fdebd0")
-    tabla.tag_configure("Obesidad clínica",    background="#fadbd8")
+    if t["bg"] == "#0F172A":
+        tabla.tag_configure("Sin obesidad",        background="#14532D", foreground="#F1F5F9")
+        tabla.tag_configure("Obesidad preclínica", background="#78350F", foreground="#F1F5F9")
+        tabla.tag_configure("Obesidad clínica",    background="#7F1D1D", foreground="#F1F5F9")
+    else:
+        tabla.tag_configure("Sin obesidad",        background="#DCFCE7")
+        tabla.tag_configure("Obesidad preclínica", background="#FEF3C7")
+        tabla.tag_configure("Obesidad clínica",    background="#FEE2E2")
 
-    scroll_x = ttk.Scrollbar(vis, orient="horizontal", command=tabla.xview)
-    scroll_y = ttk.Scrollbar(vis, orient="vertical",   command=tabla.yview)
-    tabla.configure(xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
-
+    sx = ttk.Scrollbar(frame_tabla, orient="horizontal", command=tabla.xview)
+    sy = ttk.Scrollbar(frame_tabla, orient="vertical",   command=tabla.yview)
+    tabla.configure(xscrollcommand=sx.set, yscrollcommand=sy.set)
+    sy.pack(side="right", fill="y")
     tabla.pack(fill="both", expand=True)
-    scroll_x.pack(fill="x")
+    sx.pack(fill="x")
 
     def cargar():
         for row in tabla.get_children():
             tabla.delete(row)
         for r in obtener_pacientes():
+            # r: id, nombre, edad, sexo, peso, talla, imc, exceso_grasa, nivel_musculo, signos_sintomas, clasificacion_final
             r = list(r)
-            r[11] = "Sí" if r[11] else "No"
-            r[12] = "Sí" if r[12] else "No"
-            r[13] = "Sí" if r[13] else "No"
-            tag = r[14] if r[14] in COLOR_CLASIFICACION else ""
+            tag = r[10] if r[10] in COLOR_CLASIFICACION else ""
             tabla.insert("", tk.END, values=r, tags=(tag,))
 
-    def on_doble_clic(event):
-        sel = tabla.selection()
-        if sel:
-            id_paciente = tabla.item(sel[0])["values"][0]
-            _abrir_detalle(vis, id_paciente)
-
-    tabla.bind("<Double-Button-1>", on_doble_clic)
+    tabla.bind("<Double-Button-1>",
+               lambda e: _abrir_detalle(vis, tabla.item(tabla.selection()[0])["values"][0])
+               if tabla.selection() else None)
 
     def volver():
         vis.destroy()
         menu.deiconify()
 
-    btn_frame = tk.Frame(vis)
-    btn_frame.pack(pady=6)
-    tk.Button(btn_frame, text="Actualizar",    command=cargar, width=14).pack(side="left", padx=6)
-    tk.Button(btn_frame, text="Volver al menú", command=volver, width=14).pack(side="left", padx=6)
+    bf = tk.Frame(vis, bg=t["bg"], pady=6)
+    bf.pack()
+    for texto, cmd, color in [
+        ("🔄  Actualizar", cargar, "#3B82F6"),
+        ("↩  Volver al menú", volver, "#64748B"),
+    ]:
+        tk.Button(bf, text=texto, command=cmd,
+                  bg=color, fg="white", font=("Segoe UI", 9),
+                  relief="flat", cursor="hand2", padx=12, pady=6,
+                  activebackground="#1E293B", activeforeground="white"
+                  ).pack(side="left", padx=6)
 
     tk.Label(vis, text="Doble clic en un paciente para ver su detalle",
-             font=("Arial", 8), fg="#888").pack()
+             font=("Segoe UI", 8), fg=t["fg_sub"], bg=t["bg"]).pack()
 
     vis.protocol("WM_DELETE_WINDOW", volver)
     cargar()

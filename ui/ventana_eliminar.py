@@ -5,21 +5,37 @@ import tkinter as tk
 from tkinter import messagebox
 
 from core.db import get_conexion, eliminar_paciente
-from ui.ui_utils import agregar_firma, aplicar_icono
+from ui.ui_utils import aplicar_icono, get_tema
+
 
 def abrir_eliminar_paciente(ventana_root: tk.Tk, menu: tk.Toplevel) -> None:
+    t = get_tema()
+
     ventana = tk.Toplevel(ventana_root)
     ventana.title("Eliminar Paciente")
-    ventana.geometry("360x200")
+    ventana.geometry("380x240")
     ventana.resizable(False, False)
-    agregar_firma(ventana)
+    ventana.configure(bg=t["bg"])
     aplicar_icono(ventana)
-    
-    tk.Label(ventana, text="Ingrese ID del paciente a eliminar:",
-             font=("Arial", 11)).pack(pady=14)
 
-    entry_id = tk.Entry(ventana, font=("Arial", 12), width=14, justify="center")
-    entry_id.pack(pady=4)
+    # Encabezado
+    hf = tk.Frame(ventana, bg="#7F1D1D", pady=12)
+    hf.pack(fill="x")
+    tk.Label(hf, text="🗑  Eliminar Paciente",
+             font=("Segoe UI", 12, "bold"),
+             bg="#7F1D1D", fg="white").pack()
+
+    body = tk.Frame(ventana, bg=t["bg"], padx=30, pady=16)
+    body.pack(fill="both", expand=True)
+
+    tk.Label(body, text="Ingrese el ID del paciente a eliminar:",
+             font=("Segoe UI", 10), bg=t["bg"], fg=t["fg"]).pack(pady=(0, 8))
+
+    entry_id = tk.Entry(body, font=("Segoe UI", 13), width=10,
+                        justify="center", bg=t["entry_bg"], fg=t["entry_fg"],
+                        relief="flat", highlightbackground=t["border"],
+                        highlightthickness=1, insertbackground=t["fg"])
+    entry_id.pack()
 
     def eliminar():
         try:
@@ -44,13 +60,11 @@ def abrir_eliminar_paciente(ventana_root: tk.Tk, menu: tk.Toplevel) -> None:
         _, nombre, edad, sexo, clasif = paciente
         sexo_txt = "Masculino" if sexo == "M" else "Femenino"
 
-        confirmar = messagebox.askyesno(
+        if messagebox.askyesno(
             "Confirmar eliminación",
-            f"Paciente ID {id_paciente} — {nombre}, {sexo_txt}, {edad} años\n"
+            f"ID {id_paciente} — {nombre}, {sexo_txt}, {edad} años\n"
             f"Clasificación: {clasif}\n\n¿Seguro que deseas eliminarlo?"
-        )
-
-        if confirmar:
+        ):
             eliminar_paciente(id_paciente)
             messagebox.showinfo("Éxito", "Paciente eliminado correctamente")
             entry_id.delete(0, tk.END)
@@ -59,11 +73,21 @@ def abrir_eliminar_paciente(ventana_root: tk.Tk, menu: tk.Toplevel) -> None:
         ventana.destroy()
         menu.deiconify()
 
-    btn_frame = tk.Frame(ventana)
-    btn_frame.pack(pady=14)
-    tk.Button(btn_frame, text="Eliminar", command=eliminar,
-              bg="#e74c3c", fg="white", width=14).pack(side="left", padx=6)
-    tk.Button(btn_frame, text="Volver al menú", command=volver,
-              width=14).pack(side="left", padx=6)
+    bf = tk.Frame(body, bg=t["bg"])
+    bf.pack(pady=16)
+
+    tk.Button(bf, text="Eliminar", command=eliminar,
+              bg="#EF4444", fg="white", font=("Segoe UI", 10),
+              relief="flat", cursor="hand2", width=12, pady=6,
+              activebackground="#DC2626").pack(side="left", padx=6)
+    tk.Button(bf, text="Volver al menú", command=volver,
+              bg=t["btn_bg"], fg=t["fg"], font=("Segoe UI", 10),
+              relief="flat", cursor="hand2", width=14, pady=6,
+              activebackground=t["border"]).pack(side="left", padx=6)
+
+    # Firma
+    tk.Label(ventana, text="© rogsaltt-pix",
+             font=("Segoe UI", 8, "italic"),
+             fg="#94A3B8", bg=t["bg_header"]).pack(side="bottom", pady=4, fill="x")
 
     ventana.protocol("WM_DELETE_WINDOW", volver)

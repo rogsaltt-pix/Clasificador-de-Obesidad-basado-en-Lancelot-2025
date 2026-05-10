@@ -15,27 +15,7 @@ IMC_RANGOS = [
     (40.0, float("inf"), "Obesidad tipo 3"),
 ]
 
-# % grasa corporal: saludable según sexo y grupo de edad
-GRASA_REFERENCIA = {
-    # sexo: [(edad_min, edad_max, min_saludable, max_saludable)]
-    # M = Masculino, F = Femenino
-    "M": [
-        (0,  39,  10, 20),
-        (40, 59,  11, 22),
-        (60, 999, 13, 25),
-    ],
-    "F": [
-        (0,  39,  20, 30),
-        (40, 59,  23, 33),
-        (60, 999, 24, 35),
-    ],
-}
-
-# % masa muscular: adecuado según sexo
-MUSCULO_MINIMO = {"M": 40, "F": 30}  # M=Masculino, F=Femenino
-
 # Signos/síntomas que indican daño orgánico (obesidad clínica)
-# Fuente: base de datos signosysintomas.sqlite + criterio Lancet 2025
 SIGNOS_DANIO_ORGANICO = {
     # Metabólicos
     "hipertensión", "hipertension", "hiperglucemia", "hipoglucemia",
@@ -68,7 +48,7 @@ SIGNOS_DANIO_ORGANICO = {
     "aumento de peso", "sudoración nocturna", "sudoracion nocturna",
 }
 
-# Signos/síntomas de riesgo aumentado (sin daño orgánico establecido)
+# Signos/síntomas de riesgo aumentado
 SIGNOS_RIESGO = {
     "triglicéridos", "trigliceridos", "colesterol", "prediabetes",
     "resistencia insulina", "resistencia a la insulina",
@@ -83,37 +63,20 @@ SIGNOS_RIESGO = {
 # ── Funciones auxiliares ──────────────────────────────────────────────────────
 
 def calcular_imc(peso: float, talla: float) -> float:
-    if talla <= 0:
-        raise ValueError("La talla debe ser mayor a 0")
-    if peso <= 0:
-        raise ValueError("El peso debe ser mayor a 0")
+    if talla <= 0: raise ValueError("La talla debe ser mayor a 0")
+    if peso <= 0: raise ValueError("El peso debe ser mayor a 0")
     return peso / (talla ** 2)
 
 
 def clasificar_imc(imc: float) -> str:
     for low, high, label in IMC_RANGOS:
-        if low <= imc < high:
-            return label
+        if low <= imc < high: return label
     return "Obesidad tipo 3"
 
 
-def hay_exceso_grasa(porcentaje_grasa: float, sexo: str, edad: int) -> bool:
-    """Retorna True si el % grasa está por encima del rango saludable."""
-    rangos = GRASA_REFERENCIA.get(sexo.upper(), [])
-    for edad_min, edad_max, minimo, maximo in rangos:
-        if edad_min <= edad <= edad_max:
-            return porcentaje_grasa >= maximo
-    return False
-
-
-def masa_muscular_baja(porcentaje_musculo: float, sexo: str) -> bool:
-    return porcentaje_musculo < MUSCULO_MINIMO.get(sexo.upper(), 35)
-
-
 def analizar_signos(signos_texto: str) -> tuple[bool, bool]:
-    """
-    Retorna (tiene_danio_organico, tiene_signos_riesgo).
-    """
+    if not signos_texto or signos_texto.lower() == "sin signos":
+        return False, False
     texto = signos_texto.lower()
     danio = any(s in texto for s in SIGNOS_DANIO_ORGANICO)
     riesgo = any(s in texto for s in SIGNOS_RIESGO)
@@ -124,96 +87,59 @@ def analizar_signos(signos_texto: str) -> tuple[bool, bool]:
 
 def clasificar_obesidad(
     imc: float,
-    porcentaje_grasa: float,
-    porcentaje_musculo: float,
+    exceso_grasa: bool,
+    musculo_label: str,
     sexo: str,
     edad: int,
     signos: str,
 ) -> dict:
     """
-    Clasifica al paciente según el criterio Lancet 2025.
-
-    Retorna un dict con:
-        clasificacion: "Sin obesidad" | "Obesidad preclínica" | "Obesidad clínica"
-        imc_label: etiqueta del IMC
-        exceso_grasa: bool
-        musculo_bajo: bool
-        danio_organico: bool
-        signos_riesgo: bool
-        justificacion: str
+    Clasificación estricta basada en el nuevo paradigma Lancet 2025 y entradas cualitativas.
     """
     imc_label = clasificar_imc(imc)
-    exceso = hay_exceso_grasa(porcentaje_grasa, sexo, edad)
-    musculo_bajo = masa_muscular_baja(porcentaje_musculo, sexo)
     danio, riesgo = analizar_signos(signos)
+    
+    # Hay signos si hay daño o riesgo reportado
+    tiene_signos = danio or riesgo
 
-    # ── Lógica de clasificación ──
-    # Obesidad clínica: exceso de grasa + daño en órganos/tejidos
-    if exceso and danio:
-        clasificacion = "Obesidad clínica"
-        justificacion = (
-            f"Presenta exceso de grasa corporal ({porcentaje_grasa}%) "
-            f"con evidencia de daño orgánico/tisular ({signos}). "
-            f"Su IMC indica {imc_label}."
-        )
+    # ── Lógica de la Tabla Lancet 2025 ──
 
-    # Obesidad clínica: daño orgánico confirmado (independiente del % grasa o IMC)
-    # Ej: diabetes, hipertensión, hígado graso — son enfermedades activas
-    elif danio:
-        clasificacion = "Obesidad clínica"
-        causa = "exceso de grasa corporal" if exceso else "composición corporal alterada"
-        justificacion = (
-            f"Daño orgánico/tisular confirmado ({signos}), compatible con obesidad clínica. "
-            f"IMC: {imc_label}. % grasa: {porcentaje_grasa}% "
-            f"({'por encima' if exceso else 'dentro'} del rango saludable). "
-            f"La enfermedad activa es criterio suficiente para clasificación clínica."
-        )
-
-    # Obesidad preclínica: exceso de grasa sin daño orgánico establecido
-    elif exceso and not danio:
-        clasificacion = "Obesidad preclínica"
-        extras = []
-        if musculo_bajo:
-            extras.append("masa muscular reducida")
-        if riesgo:
-            extras.append(f"signos de riesgo: {signos}")
-        extra_txt = ("; " + ", ".join(extras)) if extras else ""
-        justificacion = (
-            f"Exceso de grasa corporal ({porcentaje_grasa}%) sin daño orgánico "
-            f"establecido{extra_txt}. IMC: {imc_label}. "
-            f"Función orgánica preservada pero con riesgo aumentado."
-        )
-
-    # Obesidad preclínica: IMC ≥30 sin daño orgánico
-    elif imc >= 30 and not danio:
-        clasificacion = "Obesidad preclínica"
-        justificacion = (
-            f"IMC de {imc:.1f} ({imc_label}) sin daño orgánico confirmado. "
-            f"% grasa ({porcentaje_grasa}%) dentro de rangos. "
-            f"Se clasifica como preclínica por IMC elevado."
-        )
-
-    # Sin obesidad
-    else:
+    # CASO: NO HAY EXCESO DE GRASA (Casos 1, 2 y 4 de la tabla)
+    if not exceso_grasa:
         clasificacion = "Sin obesidad"
-        notas = []
-        if imc >= 25:
-            notas.append(f"IMC en {imc_label}")
-        if musculo_bajo:
-            notas.append("masa muscular por debajo del óptimo")
-        if riesgo:
-            notas.append(f"presenta: {signos} (monitorear)")
-        notas_txt = ". Nota: " + "; ".join(notas) if notas else ""
         justificacion = (
-            f"Sin exceso de grasa corporal confirmado y sin daño orgánico. "
-            f"IMC: {imc_label}{notas_txt}."
+            f"No se reporta exceso de grasa corporal. "
+            f"Según el nuevo estándar Lancet 2025, la ausencia de exceso de adiposidad "
+            f"descarta el diagnóstico de obesidad, incluso con un IMC de {imc:.1f} ({imc_label})."
         )
+        if tiene_signos:
+            justificacion += f" Nota: Los síntomas reportados ({signos}) deben evaluarse por otras causas."
+
+    # CASO: SÍ HAY EXCESO DE GRASA
+    else:
+        # ¿Hay Signos y Síntomas? (Caso 6 de la tabla)
+        if tiene_signos:
+            clasificacion = "Obesidad clínica"
+            justificacion = (
+                f"Presenta exceso de grasa corporal y signos/síntomas clínicos asociados ({signos}). "
+                f"Esto define un estado de obesidad clínica, independientemente de si el IMC es {imc:.1f} ({imc_label})."
+            )
+        
+        # ¿No hay Signos y Síntomas? (Casos 3 y 5 de la tabla)
+        else:
+            clasificacion = "Obesidad preclínica"
+            justificacion = (
+                f"Presenta exceso de grasa corporal sin signos o síntomas clínicos detectables. "
+                f"Se clasifica como obesidad preclínica por el riesgo metabólico latente. "
+                f"IMC actual: {imc:.1f} ({imc_label})."
+            )
 
     return {
         "clasificacion": clasificacion,
         "imc_label": imc_label,
-        "exceso_grasa": exceso,
-        "musculo_bajo": musculo_bajo,
+        "exceso_grasa": exceso_grasa,
+        "musculo_label": musculo_label,
+        "musculo_bajo": musculo_label == "Baja",
         "danio_organico": danio,
         "signos_riesgo": riesgo,
         "justificacion": justificacion,
