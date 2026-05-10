@@ -1,5 +1,5 @@
 MyBocu. V0.1
-Hecho por un estudiante de Nutrición y Dietética de la Universidad Nacional de Colombia, Bogotá.
+Hecho por un estudiante de Nutrición y Dietética de la Universidad Nacional de Colombia y Analisis y Desarrollo de Software del SENA.
 
 Basado en The Lancet Diabetes & Endocrinology. (2025). Redefining obesity: advancing care for better lives. Disponible en: https://www.thelancet.com/journals/landia/article/PIIS2213-8587(25)00004-X/fulltext
 
